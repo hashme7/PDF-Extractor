@@ -10,7 +10,9 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: [process.env.FRONTEND || ""],
+    origin: [
+      process.env.FRONTEND || "https://pdf-extractor-kue7.vercel.app",
+    ],
     methods: ["GET", "POST"],
   })
 );

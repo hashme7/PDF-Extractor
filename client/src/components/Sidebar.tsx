@@ -200,35 +200,36 @@ const SideBar: React.FC<SideBarProps> = ({
       )}
 
       {/* Desktop Sidebar */}
-      <div className="hidden sm:block w-full max-w-sm bg-white p-6 shadow-md border border-gray-200 rounded-lg">
-        <h3 className="text-center text-gray-800 text-xl font-semibold mb-4">
-          Choose Pages
+      <div className="hidden sm:block w-full max-w-sm bg-white p-8 shadow-lg rounded-2xl border border-gray-100">
+        <h3 className="text-center text-gray-900 text-2xl font-bold mb-6">
+          Select Pages to Extract
         </h3>
-        <div className="mb-5">
+        <div className="mb-6">
           <input
             type="text"
             placeholder={`Eg: 1-${totalPages}, 20`}
             value={pageValue}
             onChange={handleInputChange}
             onBlur={handleBlur}
-            className="w-full p-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 text-base border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          <p className="text-sm text-gray-500 mt-2">
-            Total Pages: {totalPages}
+          <p className="text-sm text-gray-600 mt-3">
+            Total Pages Available:{" "}
+            <span className="font-medium">{totalPages}</span>
           </p>
         </div>
         <div className="text-center">
           {!downloadLink ? (
             <button
               onClick={handleGeneratePDF}
-              className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors"
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-indigo-600 transition duration-300"
             >
               Generate PDF
             </button>
           ) : (
             <button
               onClick={handleDownload}
-              className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 rounded-xl font-semibold hover:from-green-600 hover:to-emerald-600 transition duration-300"
             >
               Download PDF
             </button>

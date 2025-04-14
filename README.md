@@ -7,9 +7,9 @@ Features
 * Upload PDF files and extract text content
 * View and navigate through PDF documents
 * Extract specific pages or page ranges
-Download extracted content in various formats
-Responsive design with Tailwind CSS
-User-friendly interface with real-time feedback
+* Download extracted content in various formats
+* Responsive design with Tailwind CSS
+* User-friendly interface with real-time feedback
 
 Tech Stack
 Frontend

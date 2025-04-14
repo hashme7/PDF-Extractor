@@ -150,21 +150,27 @@ const App = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
                   <div className="text-center p-4">
                     <h3 className="text-gray-800 font-medium">
-                      Fast Processing
+                      Instant Extraction
                     </h3>
                     <p className="text-gray-600 text-sm">
-                      Extract pages instantly
+                      Quickly extract text and pages from PDFs
                     </p>
                   </div>
                   <div className="text-center p-4">
-                    <h3 className="text-gray-800 font-medium">Secure</h3>
+                    <h3 className="text-gray-800 font-medium">
+                      Secure Uploads
+                    </h3>
                     <p className="text-gray-600 text-sm">
-                      Your files are protected
+                      Your files are encrypted and never stored
                     </p>
                   </div>
                   <div className="text-center p-4">
-                    <h3 className="text-gray-800 font-medium">Easy to Use</h3>
-                    <p className="text-gray-600 text-sm">Simple interface</p>
+                    <h3 className="text-gray-800 font-medium">
+                      Clean & Simple UI
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Designed for easy and fast use
+                    </p>
                   </div>
                 </div>
               </div>

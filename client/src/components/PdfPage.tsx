@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
-import * as pdfjsLib from "pdfjs-dist";
-import axios from "axios";
+import { PdfPageProps } from "../types";
 import SideBar from "./Sidebar";
 import Loader from "./Loader";
-import { PdfPageProps } from "../types";
 import placeholderImage from "../assets/placeholder.png";
 import {
   FaChevronRight,
@@ -12,143 +9,117 @@ import {
   FaCheck,
   FaTimes,
 } from "react-icons/fa";
+import { usePdfPage } from "../hooks/usePdPagef";
 
 const PdfPage: React.FC<PdfPageProps> = ({ pdfPath }) => {
-  const [images, setImages] = useState<string[]>([]);
-  const [selectedImage, setSelectedImage] = useState<string[]>([]);
-  const [generatedPdfLink, setGeneratedPdfLink] = useState<string | null>(null);
-  const [selectedPreviewImage, setSelectedPreviewImage] = useState<number>(0);
-  const [totalPdfPage, setTotalPdfPage] = useState(0);
-  const [selectedPages, setSelectedPages] = useState<number[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showPageSelector, setShowPageSelector] = useState(false);
+  const {
+    images,
+    selectedImage,
+    generatedPdfLink,
+    selectedPreviewImage,
+    totalPdfPage,
+    selectedPages,
+    isModalOpen,
+    isLoading,
+    showPageSelector,
+    error,
+    setSelectedPreviewImage,
+    setIsModalOpen,
+    setShowPageSelector,
+    generatePdf,
+    inputChange,
+    handleImageSelection,
+  } = usePdfPage({ pdfPath });
 
-  const generatePdf = async (selectedPages: string) => {
-    try {
-      const res = await axios.post("http://localhost:3000/generatepdf", {
-        selectedPages,
-        pdfPath,
-      });
-      setGeneratedPdfLink(res.data.generatedDownloadLink);
-    } catch (error) {
-      console.error("Error generating PDF:", error);
+  // Handle keyboard events for accessibility
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLDivElement>,
+    image: string,
+    index: number
+  ) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleImageSelection(image, index);
     }
   };
-
-  const inputChange = (input: string) => {
-    const numArr = input.split(",");
-    setSelectedPages([]);
-    const newSelectedImages: string[] = [];
-    for (const str of numArr) {
-      if (str.includes("-")) {
-        const arr = str.split("-");
-        for (let i = Number(arr[0]); i <= Number(arr[1]); i++) {
-          setSelectedPages((prev) => [...prev, i]);
-          newSelectedImages.push(images[i - 1]);
-        }
-      } else {
-        setSelectedPages((prev) => [...prev, Number(str)]);
-        newSelectedImages.push(images[Number(str) - 1]);
-      }
-    }
-    setSelectedImage(newSelectedImages);
-  };
-
-  const handleImageSelection = (image: string, index: number) => {
-    setSelectedImage((prev) => {
-      if (prev.includes(image)) {
-        if (selectedPreviewImage > 0) {
-          setSelectedPreviewImage((prev) => prev - 1);
-        }
-        return prev.filter((img) => img !== image);
-      }
-      return [...prev, image];
-    });
-
-    setSelectedPages((prev) =>
-      prev.includes(index + 1)
-        ? prev.filter((num) => num !== index + 1)
-        : [...prev, index + 1]
-    );
-  };
-
-  useEffect(() => {
-    const loadPdf = async () => {
-      setIsLoading(true);
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.js`;
-
-      try {
-        const loadingTask = pdfjsLib.getDocument(pdfPath);
-        const pdfDoc = await loadingTask.promise;
-        const numPages = pdfDoc.numPages;
-        setTotalPdfPage(numPages);
-
-        const pageImages: string[] = [];
-        for (let i = 1; i <= numPages; i++) {
-          const page = await pdfDoc.getPage(i);
-          const viewport = page.getViewport({ scale: 1.5 });
-          const canvas = document.createElement("canvas");
-          const context = canvas.getContext("2d");
-          if (!context) continue;
-
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
-
-          await page.render({ canvasContext: context, viewport }).promise;
-          pageImages.push(canvas.toDataURL("image/png"));
-        }
-        setImages(pageImages);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error loading PDF:", error);
-        setIsLoading(false);
-      }
-    };
-
-    loadPdf();
-  }, [pdfPath]);
 
   return (
-    <div className="flex flex-col sm:flex-row h-screen bg-white text-gray-800">
+    <div className="flex flex-col sm:flex-row h-screen bg-gradient-to-r from-blue-100 to-white">
       {/* Page Selection Button - Toggles the page selector panel */}
       <div className="fixed top-4 left-4 z-40">
         <button
-          onClick={() => setShowPageSelector(!showPageSelector)}
-          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors flex items-center gap-2"
+          onClick={() => setShowPageSelector((prev: any) => !prev)}
+          className=" rounded-4xl bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-2.5 px-5 shadow-md hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          aria-label={
+            showPageSelector ? "Hide page selector" : "Show page selector"
+          }
         >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            {showPageSelector ? (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            )}
+          </svg>
           {showPageSelector ? "Hide" : "Show"} Page Selector
         </button>
       </div>
 
       {/* Page Selection Panel - Hidden by default, toggleable */}
       <div
-        className={`fixed top-0 left-0 z-30 bg-white shadow-lg w-64 h-screen overflow-y-auto transition-transform duration-300 transform ${
+        className={`fixed top-0 left-0 z-30 bg-white shadow-md w-64 h-screen overflow-y-auto transition-transform duration-300 transform ${
           showPageSelector ? "translate-x-0" : "-translate-x-full"
         }`}
+        aria-hidden={!showPageSelector}
       >
-        <div className="sticky top-0 z-10 bg-white py-4 px-4 border-b border-gray-200">
+        <div className="sticky top-0 z-10 bg-gradient-to-r from-blue-100 to-white">
           <h1 className="text-xl font-bold text-gray-800 text-center">
-            Select Pages
+            {" ________"}
           </h1>
 
           {isLoading && (
             <div className="flex flex-col items-center justify-center p-6">
               <Loader />
-              <h1 className="text-lg text-gray-600 mt-3">Loading Pages...</h1>
+              <p className="text-lg text-gray-600 mt-3">Loading Pages...</p>
             </div>
+          )}
+
+          {error && (
+            <p className="text-red-500 text-center mt-4" role="alert">
+              {error}
+            </p>
           )}
         </div>
 
-        {!isLoading && (
-          <div className="grid grid-cols-2 gap-3 p-4">
-            {images.map((image, index) => (
+        {!isLoading && !error && (
+          <div className="grid grid-cols-2 gap-3 p-4 ">
+            {images.map((image: any, index: number) => (
               <div
                 key={index}
-                className="relative cursor-pointer"
+                className="relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400"
                 onClick={() => handleImageSelection(image, index)}
+                onKeyDown={(e) => handleKeyDown(e, image, index)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Select page ${index + 1}`}
               >
-                <div className="relative overflow-hidden rounded-md shadow-sm border border-gray-200">
+                <div className="relative overflow-hidden rounded-md shadow-md border border-gray-200">
                   <img
                     className={`w-full h-32 object-cover ${
                       selectedPages.includes(index + 1)
@@ -161,7 +132,10 @@ const PdfPage: React.FC<PdfPageProps> = ({ pdfPath }) => {
 
                   {selectedPages.includes(index + 1) && (
                     <div className="absolute top-1 right-1 bg-blue-500 rounded-full p-1">
-                      <FaCheck className="w-3 h-3 text-white" />
+                      <FaCheck
+                        className="w-3 h-3 text-white"
+                        aria-hidden="true"
+                      />
                     </div>
                   )}
 
@@ -172,7 +146,7 @@ const PdfPage: React.FC<PdfPageProps> = ({ pdfPath }) => {
                   </div>
                 </div>
               </div>
-            ))}ggit
+            ))}
           </div>
         )}
       </div>
@@ -192,8 +166,11 @@ const PdfPage: React.FC<PdfPageProps> = ({ pdfPath }) => {
               <div className="absolute left-4 z-10">
                 {selectedPreviewImage > 0 && (
                   <button
-                    className="p-2 rounded-full bg-gray-200 hover:bg-blue-100 transition-all"
-                    onClick={() => setSelectedPreviewImage((prev) => prev - 1)}
+                    className="p-2 rounded-full bg-gray-200 hover:bg-blue-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    onClick={() =>
+                      setSelectedPreviewImage((prev: number) => prev - 1)
+                    }
+                    aria-label="Previous preview page"
                   >
                     <FaChevronLeft size={18} className="text-gray-700" />
                   </button>
@@ -204,16 +181,18 @@ const PdfPage: React.FC<PdfPageProps> = ({ pdfPath }) => {
                 src={selectedImage[selectedPreviewImage] || placeholderImage}
                 alt="Preview"
                 className="max-h-[70vh] max-w-full object-contain shadow-md"
+                onError={(e) => (e.currentTarget.src = placeholderImage)}
               />
 
               <div className="absolute right-4 z-10">
                 {selectedImage.length > 1 &&
                   selectedPreviewImage + 1 < selectedImage.length && (
                     <button
-                      className="p-2 rounded-full bg-gray-200 hover:bg-blue-100 transition-all"
+                      className="p-2 rounded-full bg-gray-200 hover:bg-blue-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
                       onClick={() =>
-                        setSelectedPreviewImage((prev) => prev + 1)
+                        setSelectedPreviewImage((prev: number) => prev + 1)
                       }
+                      aria-label="Next preview page"
                     >
                       <FaChevronRight size={18} className="text-gray-700" />
                     </button>
@@ -226,6 +205,7 @@ const PdfPage: React.FC<PdfPageProps> = ({ pdfPath }) => {
                 src={placeholderImage}
                 alt="Select pages to preview"
                 className="max-h-[40vh] opacity-50"
+                onError={(e) => (e.currentTarget.src = "/fallback-image.png")}
               />
               <p className="text-xl mt-6 text-center text-gray-600">
                 Select pages to preview
@@ -240,7 +220,8 @@ const PdfPage: React.FC<PdfPageProps> = ({ pdfPath }) => {
         <div className="sm:hidden fixed bottom-4 right-4 z-40">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-blue-500 text-white py-3 px-6 rounded-full flex items-center justify-center gap-2 hover:bg-blue-600 transition-colors shadow-md"
+            className="bg-blue-500 text-white py-3 px-6 rounded-full flex items-center justify-center gap-2 hover:bg-blue-600 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            aria-label="Open preview"
           >
             <FaEye className="w-4 h-4" />
             <span>Preview</span>
@@ -253,15 +234,19 @@ const PdfPage: React.FC<PdfPageProps> = ({ pdfPath }) => {
         <div className="fixed inset-0 z-50 bg-white flex items-center justify-center p-4 sm:hidden">
           <button
             onClick={() => setIsModalOpen(false)}
-            className="absolute top-4 right-4 text-gray-800 bg-gray-200 rounded-full p-2 hover:bg-gray-300 transition-colors z-10"
+            className="absolute top-4 right-4 text-gray-800 bg-gray-200 rounded-full p-2 hover:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 z-10"
+            aria-label="Close preview"
           >
             <FaTimes className="w-5 h-5" />
           </button>
           <div className="relative w-full flex items-center justify-center">
             {selectedPreviewImage > 0 && (
               <button
-                className="absolute left-2 p-2 rounded-full bg-gray-200 hover:bg-blue-100 transition-all"
-                onClick={() => setSelectedPreviewImage((prev) => prev - 1)}
+                className="absolute left-2 p-2 rounded-full bg-gray-200 hover:bg-blue-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
+                onClick={() =>
+                  setSelectedPreviewImage((prev: number) => prev - 1)
+                }
+                aria-label="Previous preview page"
               >
                 <FaChevronLeft className="text-gray-700" size={18} />
               </button>
@@ -271,13 +256,17 @@ const PdfPage: React.FC<PdfPageProps> = ({ pdfPath }) => {
               src={selectedImage[selectedPreviewImage] || placeholderImage}
               alt="Full Preview"
               className="max-w-full max-h-[80vh] object-contain"
+              onError={(e) => (e.currentTarget.src = "/fallback-image.png")}
             />
 
             {selectedImage.length > 1 &&
               selectedPreviewImage + 1 < selectedImage.length && (
                 <button
-                  className="absolute right-2 p-2 rounded-full bg-gray-200 hover:bg-blue-100 transition-all"
-                  onClick={() => setSelectedPreviewImage((prev) => prev + 1)}
+                  className="absolute right-2 p-2 rounded-full bg-gray-200 hover:bg-blue-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  onClick={() =>
+                    setSelectedPreviewImage((prev: number) => prev + 1)
+                  }
+                  aria-label="Next preview page"
                 >
                   <FaChevronRight className="text-gray-700" size={18} />
                 </button>

@@ -9,7 +9,6 @@ export const uploadPdf = async (req: Request, res: Response): Promise<void> => {
       return;
     }
     const filePath = `${process.env.BACKEND}/uploads/${req.file.filename}`;
-    console.log(filePath,"filePath...............................................")
     res.status(201).json({ filePath });
   } catch (error) {
     console.error("error while uploading pdf");
