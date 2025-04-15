@@ -1,74 +1,84 @@
-# PDF-Extractor
+# 📄 PDF-Extractor
 
-# A modern web application for extracting and manipulating content from PDF files. Built with React, TypeScript, Node.js, and Express.
+A modern web application for extracting and manipulating content from PDF files. Built with **React**, **TypeScript**, **Node.js**, and **Express**, this app provides a sleek and user-friendly experience for handling PDF documents.
 
-Features
+---
 
-* Upload PDF files and extract text content
-* View and navigate through PDF documents
-* Extract specific pages or page ranges
-* Download extracted content in various formats
-* Responsive design with Tailwind CSS
-* User-friendly interface with real-time feedback
+## ✨ Features
 
-Tech Stack
-Frontend
+- 📁 Upload PDF files and extract text content
+- 📄 View and navigate through PDF documents
+- 🔍 Extract specific pages or page ranges
+- ⬇️ Download extracted content in various formats
+- 💡 Real-time feedback with SweetAlert2
+- 📱 Responsive design using Tailwind CSS
+- 🧠 Intuitive, clean UI with consistent typography
 
-React 19
-TypeScript
-Tailwind CSS 4
-PDF.js for PDF rendering
-Axios for API communication
-SweetAlert2 for notifications
+---
 
-Backend
+## 🧰 Tech Stack
 
-Node.js
-Express 5
-PDF-lib for PDF manipulation
-Multer for file uploads
-CORS for cross-origin requests
-dotenv for environment variable management
+### 🖥 Frontend
+- **React 19**
+- **TypeScript**
+- **Tailwind CSS 4**
+- **PDF.js** (PDF rendering)
+- **Axios** (API communication)
+- **SweetAlert2** (notifications)
 
-Prerequisites
+### ⚙️ Backend
+- **Node.js**
+- **Express 5**
+- **PDF-lib** (PDF manipulation)
+- **Multer** (file uploads)
+- **CORS**
+- **dotenv**
 
-Node.js (v16.x or higher)
-npm or yarn
-Git
+---
 
-Getting Started
-Clone the Repository
-bashgit clone https://github.com/yourusername/pdf-extractor.git
+## 🔤 UI Typography & Font Sizes
+
+We use Tailwind’s modern typography system to create an attractive and readable interface:
+
+| Element            | Tailwind Class      | Size       | Usage                        |
+|--------------------|---------------------|------------|------------------------------|
+| Main Headings      | `text-3xl md:text-4xl font-bold` | 24–36px | Page titles, modals          |
+| Subheadings        | `text-xl md:text-2xl font-semibold` | 18–24px | Section titles               |
+| Body Text          | `text-base md:text-lg` | 16–18px | Paragraphs, regular content  |
+| Labels / Small Text| `text-sm text-gray-600` | 14px      | Inputs, meta info            |
+| Buttons            | `text-sm md:text-base font-medium` | 14–16px | CTA, secondary actions       |
+
+Typography is clean and modern using a sans-serif font (e.g., Inter, Roboto, or system defaults).
+
+---
+
+## ⚙️ Prerequisites
+
+- Node.js (v16.x or higher)
+- npm or yarn
+- Git
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/pdf-extractor.git
 cd pdf-extractor
-Backend Setup
-bash# Navigate to the backend directory
-cd backend
+```
+## backend setup
+```bash
+  cd backend
 
 # Install dependencies
 npm install
 
-# Create a .env file and add necessary environment variables
+# Setup environment
 cp .env.example .env
 # Edit .env with your configurations
 
-# Start the development server
+# Run backend server
 npm run dev
-The backend server will run on http://localhost:3000 by default.
-Frontend Setup
-bash# Navigate to the frontend directory
-cd ../frontend
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm run dev
-The frontend development server will run on http://localhost:5173 by default.
-Environment Variables
-Backend (.env)
-PORT=3000
-NODE_ENV=development
-UPLOAD_LIMIT=10mb
-CORS_ORIGIN=http://localhost:5173
-Frontend (.env)
-VITE_API_URL=http://localhost:3000/api
+```
