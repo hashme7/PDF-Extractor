@@ -82,3 +82,14 @@ cp .env.example .env
 # Run backend server
 npm run dev
 ```
+## frontend setup
+```bash
+# Navigate to frontend directory
+cd ../frontend
+
+# Install dependencies
+npm install
+
+# Run frontend server
+npm run dev
+```
